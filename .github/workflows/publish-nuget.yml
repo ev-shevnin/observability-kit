@@ -1,0 +1,31 @@
+name: Publish NuGet
+
+on:
+  push:
+    tags:
+      - 'v*'   # Например: v1.0.0
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Pack NuGet package
+        run: dotnet pack --configuration Release --no-build --output ./nupkgs
+
+      - name: Push to GitHub Packages
+        run: dotnet nuget push ./nupkgs/*.nupkg --source "https://nuget.pkg.github.com/ev-shevnin/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate

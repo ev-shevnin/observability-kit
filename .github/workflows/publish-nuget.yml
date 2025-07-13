@@ -3,7 +3,7 @@ name: Publish NuGet
 on:
   push:
     tags:
-      - 'v*'   # Например: v1.0.0
+      - 'v*'
 
 jobs:
   publish:
